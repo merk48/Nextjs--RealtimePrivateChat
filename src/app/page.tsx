@@ -1,4 +1,6 @@
 "use client";
+import { client } from "@/lib/client";
+import { useMutation } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
 
@@ -31,7 +33,12 @@ export default function Home() {
     main();
   }, []);
 
-  const createRoom = () => {};
+  const { mutate: createRoom } = useMutation({
+    mutationKey: [""],
+    mutationFn: async () => {
+      const res = await client.room.create.post();
+    },
+  });
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4">
