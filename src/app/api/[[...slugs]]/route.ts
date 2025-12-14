@@ -19,6 +19,8 @@ const rooms = new Elysia({ prefix: "/room" }).post("/create", async () => {
   return { roomId };
 });
 
+const messages = new Elysia({ prefix: "message" });
+
 const app = new Elysia({ prefix: "/api" }).use(rooms);
 
 export const GET = app.fetch;
