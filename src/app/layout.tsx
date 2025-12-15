@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-// @ts-expect-error : labla
 import "./globals.css";
 import { JetBrains_Mono } from "next/font/google";
 import { Providers } from "@/components/providers";

@@ -3,12 +3,9 @@ import { redis } from "./lib/redis";
 import { nanoid } from "nanoid";
 
 export const proxy = async (req: NextRequest) => {
-  // OVERVIEW: CHECK IF USER IS ALLOWED TO JOIN ROOM
-
   const pathname = req.nextUrl.pathname;
 
   const roomMatch = pathname.match(/^\/room\/([^/]+)$/);
-
   if (!roomMatch) return NextResponse.redirect(new URL("/", req.url));
 
   const roomId = roomMatch[1];
@@ -17,19 +14,22 @@ export const proxy = async (req: NextRequest) => {
     `meta:${roomId}`
   );
 
-  if (!meta)
+  if (!meta) {
     return NextResponse.redirect(new URL("/?error=room-not-found", req.url));
+  }
 
-  const exsistingToken = req.cookies.get("x-auth-token")?.value;
+  const existingToken = req.cookies.get("x-auth-token")?.value;
 
-  // IS USER ALLOWED TO JOIN ROOM
-  if (exsistingToken && meta.connected.includes(exsistingToken)) {
+  // USER IS ALLOWED TO JOIN ROOM
+  if (existingToken && meta.connected.includes(existingToken)) {
     return NextResponse.next();
   }
 
+  // USER IS NOT ALLOWED TO JOIN
   if (meta.connected.length >= 2) {
     return NextResponse.redirect(new URL("/?error=room-full", req.url));
   }
+
   const response = NextResponse.next();
 
   const token = nanoid();
